@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@tailwind base;@tailwind components;@tailwind utilities;
+@layer base{body{@apply bg-ejo-canvas font-body text-ejo-ink;}.eyebrow{@apply text-[11px] font-bold tracking-[1.03px] text-[#52616B];}a,button,input,textarea,select{@apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ejo-green;}button:disabled{@apply cursor-not-allowed text-ejo-muted;}}
+@layer components{.section-heading{@apply mb-4 flex items-end justify-between gap-3;}.section-heading h2{@apply font-display text-base font-bold tracking-tight;}}
+
+@media (max-width: 1023px) {
+  /* Conversation input stays reachable above the mobile tab bar. */
+  main footer { position: sticky; bottom: 68px; z-index: 20; }
+  .overflow-x-auto { overflow-x: visible !important; flex-wrap: wrap; }
+}
+
+@media (max-width: 479px) {
+  body { overflow-x: hidden; }
+  button { min-height: 44px; }
+}

@@ -1,0 +1,11 @@
+import type { Provider, User } from '../types';
+export const currentUser: User = { id: 'user-01', name: 'Mutesi Uwera', initials: 'MU' };
+export const providers: Provider[] = [
+  { id: 'irembo', name: 'Irembo', domain: 'Serivisi rusange', description: 'Korera serivisi za Leta mu buryo bworoshye, uhereye ku cyo ushaka gukora.', status: 'connected', lastUsed: 'Wakoresheje ejo', mark: 'i', website: 'irembo.gov.rw', capabilities: [{ id: 'mutuelle', name: 'Mutuelle' }, { id: 'documents', name: "Serivisi z'inyandiko" }, { id: 'status', name: "Kureba status y'ubusabe" }] },
+  { id: 'rra', name: 'RRA', domain: 'Imisoro', description: 'Reba cyangwa wishyure imisoro ijyanye n’umuntu cyangwa ubucuruzi.', status: 'connected', mark: 'R', website: 'rra.gov.rw', capabilities: [{ id: 'tax', name: 'Serivisi z’imisoro' }] },
+  { id: 'gmail', name: 'Gmail', domain: 'Email', description: 'Ohereza no kubona imenyesha, inyemezabwishyu n’amakuru yo mu barihi.', status: 'connected', mark: 'G', website: 'gmail.com', capabilities: [{ id: 'inbox', name: 'Inbox' }, { id: 'menyesha', name: 'Imenyesha' }] },
+  { id: 'whatsapp', name: 'WhatsApp', domain: 'Ubutumwa', description: 'Sigira WhatsApp ubutumwa bwanditse, nk’ikiganiro gisanzwe.', status: 'connected', mark: 'W', website: 'whatsapp.com', capabilities: [{ id: 'ubutumwa', name: 'Ubutumwa' }] },
+  { id: 'mtn', name: 'MTN Mobile Money', domain: 'MoMo', description: 'Ishyura, ohereza cyangwa uguruze amafaranga ukoresheje Mobile Money.', status: 'connected', mark: 'M', website: 'mtn.com', capabilities: [{ id: 'momo', name: 'Mobile Money' }] },
+  { id: 'bk', name: 'Bank of Kigali', domain: 'Banki', description: 'Reba konti yawe, ishyure amafaranga cyangwa ubone ubusabane bwiza.', status: 'connected', mark: 'B', website: 'bk.rw', capabilities: [{ id: 'konti', name: 'Konti' }, { id: 'ubwishyu', name: 'Ubwishyu' }] },
+  { id: 'eucl', name: 'EUCL', domain: 'Umuriro', description: 'Kugura umuriro no kureba konti ya metero.', status: 'unavailable', mark: 'E', website: 'eucl.rw', capabilities: [] },
+];

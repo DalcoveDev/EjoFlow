@@ -1,0 +1,2 @@
+import { CheckCircle2 } from 'lucide-react'; import { AnimatePresence, motion } from 'framer-motion';
+export function Toast({ message }: { message: string | null }) { return <AnimatePresence>{message&&<motion.div initial={{opacity:0,y:15}} animate={{opacity:1,y:0}} exit={{opacity:0,y:15}} role="status" className="fixed bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 bg-[#143c33] px-4 py-3 text-xs text-white shadow-lg"><CheckCircle2 size={15} className="text-[#9ee3c4]"/>{message}</motion.div>}</AnimatePresence> }

@@ -1,0 +1,2 @@
+import type { Config } from 'tailwindcss';
+export default { content: ['./index.html', './src/**/*.{ts,tsx}'], theme: { extend: { colors: { ejo: { blue: '#123B5D', green: '#16865B', amber: '#E6A23C', ink: '#17252F', muted: '#52616B', border: '#D9E2E0', canvas: '#F7F9F7', error: '#C83C3C' } }, fontFamily: { display: ['Plus Jakarta Sans', 'sans-serif'], body: ['Noto Sans', 'sans-serif'] } } }, plugins: [] } satisfies Config;

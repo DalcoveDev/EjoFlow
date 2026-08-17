@@ -1,0 +1,2 @@
+import { delay } from './delay'; import type { Action } from '../../types';
+export const mockActionService = { async suggest(providerId: string): Promise<Action[]> { await delay(450); return [{ id: 'mutuelle-pay', providerId, label: 'Kwishyura Mutuelle' }]; } };

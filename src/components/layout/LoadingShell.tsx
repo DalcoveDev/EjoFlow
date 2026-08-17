@@ -1,0 +1,1 @@
+export function LoadingShell(){return <div className="p-5 md:p-10"><div className="h-3 w-20 animate-pulse bg-[#e4eae8]"/><div className="mt-3 h-8 w-64 animate-pulse bg-[#e4eae8]"/><div className="mt-10 grid max-w-3xl gap-3"><div className="h-40 animate-pulse border border-ejo-border bg-white"/><div className="h-32 animate-pulse border border-ejo-border bg-white"/></div></div>}
