@@ -1,2 +1,0 @@
-import { delay } from './delay'; import type { Invoice, Payment, Transaction } from '../../types';
-export const mockPaymentService = { async create(invoice: Invoice): Promise<Payment> { await delay(); return { id: crypto.randomUUID(), amount: invoice.amount, currency: invoice.currency, status: 'pending' }; }, async complete(payment: Payment): Promise<Transaction> { await delay(800); return { id: crypto.randomUUID(), paymentId: payment.id, status: 'complete' }; } };

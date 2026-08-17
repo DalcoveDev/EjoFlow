@@ -1,11 +1,20 @@
-import type { Provider, User } from '../types';
-export const currentUser: User = { id: 'user-01', name: 'Mutesi Uwera', initials: 'MU' };
+import type { Provider, ProviderCategory } from '../types';
+export const providerCategoryLabels: Record<ProviderCategory, string> = {
+  government: 'Serivisi za Leta',
+  communication: 'Ibiganiro',
+  business: 'Ubucuruzi',
+  personal: 'Ku giti cye',
+  ai: 'AI',
+};
 export const providers: Provider[] = [
-  { id: 'irembo', name: 'Irembo', domain: 'Serivisi rusange', description: 'Korera serivisi za Leta mu buryo bworoshye, uhereye ku cyo ushaka gukora.', status: 'connected', lastUsed: 'Wakoresheje ejo', mark: 'i', website: 'irembo.gov.rw', capabilities: [{ id: 'mutuelle', name: 'Mutuelle' }, { id: 'documents', name: "Serivisi z'inyandiko" }, { id: 'status', name: "Kureba status y'ubusabe" }] },
-  { id: 'rra', name: 'RRA', domain: 'Imisoro', description: 'Reba cyangwa wishyure imisoro ijyanye n’umuntu cyangwa ubucuruzi.', status: 'connected', mark: 'R', website: 'rra.gov.rw', capabilities: [{ id: 'tax', name: 'Serivisi z’imisoro' }] },
-  { id: 'gmail', name: 'Gmail', domain: 'Email', description: 'Ohereza no kubona imenyesha, inyemezabwishyu n’amakuru yo mu barihi.', status: 'connected', mark: 'G', website: 'gmail.com', capabilities: [{ id: 'inbox', name: 'Inbox' }, { id: 'menyesha', name: 'Imenyesha' }] },
-  { id: 'whatsapp', name: 'WhatsApp', domain: 'Ubutumwa', description: 'Sigira WhatsApp ubutumwa bwanditse, nk’ikiganiro gisanzwe.', status: 'connected', mark: 'W', website: 'whatsapp.com', capabilities: [{ id: 'ubutumwa', name: 'Ubutumwa' }] },
-  { id: 'mtn', name: 'MTN Mobile Money', domain: 'MoMo', description: 'Ishyura, ohereza cyangwa uguruze amafaranga ukoresheje Mobile Money.', status: 'connected', mark: 'M', website: 'mtn.com', capabilities: [{ id: 'momo', name: 'Mobile Money' }] },
-  { id: 'bk', name: 'Bank of Kigali', domain: 'Banki', description: 'Reba konti yawe, ishyure amafaranga cyangwa ubone ubusabane bwiza.', status: 'connected', mark: 'B', website: 'bk.rw', capabilities: [{ id: 'konti', name: 'Konti' }, { id: 'ubwishyu', name: 'Ubwishyu' }] },
-  { id: 'eucl', name: 'EUCL', domain: 'Umuriro', description: 'Kugura umuriro no kureba konti ya metero.', status: 'unavailable', mark: 'E', website: 'eucl.rw', capabilities: [] },
+  { id: 'irembo', name: 'Irembo', category: 'government', domain: 'Serivisi za Leta', website: 'irembo.gov.rw', mark: 'i', status: 'demo', description: 'Korera serivisi za Leta mu buryo bworoshye, uhereye ku cyo ushaka gukora.', capabilities: [{ id: 'mutuelle', name: 'Mutuelle' }, { id: 'inyandiko', name: "Serivisi z'inyandiko" }, { id: 'ubusabe', name: 'Ubusabe' }] },
+  { id: 'rssb', name: 'RSSB', category: 'government', domain: 'Imisanzu', website: 'rssb.rw', mark: 'R', status: 'demo', description: 'Imisanzu, pension n’izindi serivisi z’imibereho myiza.', capabilities: [{ id: 'imisanzu', name: 'Imisanzu' }, { id: 'pension', name: 'Pension' }, { id: 'clearance', name: 'Clearance' }] },
+  { id: 'rnp', name: 'Rwanda National Police', category: 'government', domain: 'Umutekano', website: 'police.gov.rw', mark: 'P', status: 'demo', description: 'Serivisi za Permis, umutekano n’amakuru ya Polisi y’u Rwanda.', capabilities: [{ id: 'driving', name: 'Driving services' }, { id: 'status', name: 'Status' }, { id: 'info', name: 'Information' }] },
+  { id: 'rra', name: 'RRA', category: 'government', domain: 'Imisoro', website: 'rra.gov.rw', mark: 'R', status: 'demo', description: 'Kureba no kwishyura imisoro ijyanye n’umuntu cyangwa ubucuruzi.', capabilities: [{ id: 'imisoro', name: 'Imisoro' }, { id: 'tax', name: 'Tax services' }, { id: 'info', name: 'Information' }] },
+  { id: 'rsb', name: 'Rwanda Standards Board', category: 'government', domain: 'Ibipimo', website: 'rsb.gov.rw', mark: 'S', status: 'demo', description: 'Kugenzura ibipimo, inzobere n’icyemezo cy’ibicuruzwa.', capabilities: [{ id: 'verification', name: 'Certificate verification' }, { id: 'standards', name: 'Standards' }, { id: 'certification', name: 'Certification' }] },
+  { id: 'gmail', name: 'Gmail', category: 'communication', domain: 'Email', website: 'gmail.com', mark: 'G', status: 'connected', description: 'Ohereza no kubona imenyesha, inyemezabwishyu n’amakuru yo mu barihi.', capabilities: [{ id: 'email', name: 'Email' }, { id: 'draft', name: 'Draft' }, { id: 'send', name: 'Send' }] },
+  { id: 'whatsapp', name: 'WhatsApp', category: 'communication', domain: 'Ubutumwa', website: 'whatsapp.com', mark: 'W', status: 'demo', description: 'Ubutumwa, abo uvuze n’amenyesha — byose mu kiganiro kimwe.', capabilities: [{ id: 'messages', name: 'Messages' }, { id: 'contacts', name: 'Contacts' }, { id: 'notifications', name: 'Notifications' }] },
+  { id: 'ejobusiness', name: 'EjoFlow Business', category: 'business', domain: 'Ubucuruzi', mark: 'E', status: 'connected', description: 'Ubucuruzi bwawe hamwe: amacuruzo, ububiko n’amaraporo.', capabilities: [{ id: 'sales', name: 'Sales' }, { id: 'inventory', name: 'Inventory' }, { id: 'reports', name: 'Reports' }] },
+  { id: 'tasks', name: 'My Tasks', category: 'personal', domain: 'Imirimo', mark: 'T', status: 'connected', description: 'Imirimo, kwibutsa n’inyandiko zawe — byose ahantu hamwe.', capabilities: [{ id: 'tasks', name: 'Tasks' }, { id: 'reminders', name: 'Reminders' }, { id: 'notes', name: 'Notes' }] },
+  { id: 'ejochat', name: 'EjoChat', category: 'ai', domain: 'AI', mark: 'C', status: 'connected', description: 'EjoChat AI: ibiganiro, guhindura indimi n’ubufasha bwa buri munsi.', capabilities: [{ id: 'conversation', name: 'Conversation' }, { id: 'translation', name: 'Translation' }, { id: 'daily', name: 'Daily assistance' }] },
 ];

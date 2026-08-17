@@ -1,0 +1,105 @@
+{
+  "name": "EjoFlow — Gmail integration",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": false,
+        "httpMethod": "POST",
+        "path": "ejochat-gmail",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-ejochat-gmail",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-400, 64],
+      "webhookId": "ejochat-gmail"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 1 },
+          "conditions": [
+            {
+              "id": "cond-1",
+              "leftValue": "={{ $json.body.action }}",
+              "rightValue": "read_inbox",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-read-inbox",
+      "name": "Action = read_inbox?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-224, 64]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 5,
+        "simple": true,
+        "filters": { "readStatus": "unread" },
+        "options": {}
+      },
+      "id": "gmail-read-inbox",
+      "name": "Gmail — Soma imenyesha",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "replace-with-your-gmail-credential-id",
+          "name": "Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { provider: $('Webhook').first().json.body.provider, action: $('Webhook').first().json.body.action, count: $items('Gmail — Soma imenyesha').length, emails: $items('Gmail — Soma imenyesha').map((item) => ({ subject: item.json.Subject ?? '', from: item.json.From ?? '', snippet: item.json.snippet ?? '', date: item.json.internalDate ? new Date(Number(item.json.internalDate)).toISOString() : '' })) } }}",
+        "options": {}
+      },
+      "id": "respond-gmail",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [224, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { provider: $json.body.provider, action: $json.body.action, status: 'unknown_action' } }}",
+        "options": {}
+      },
+      "id": "respond-unknown",
+      "name": "Respond — action itazwi",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [224, 144]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Action = read_inbox?", "type": "main", "index": 0 }]]
+    },
+    "Action = read_inbox?": {
+      "main": [
+        [{ "node": "Gmail — Soma imenyesha", "type": "main", "index": 0 }],
+        [{ "node": "Respond — action itazwi", "type": "main", "index": 0 }]
+      ]
+    },
+    "Gmail — Soma imenyesha": {
+      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {},
+  "meta": { "templateCredsSetupCompleted": false }
+}

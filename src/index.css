@@ -2,6 +2,10 @@
 @tailwind base;@tailwind components;@tailwind utilities;
 @layer base{body{@apply bg-ejo-canvas font-body text-ejo-ink;}.eyebrow{@apply text-[11px] font-bold tracking-[1.03px] text-[#52616B];}a,button,input,textarea,select{@apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ejo-green;}button:disabled{@apply cursor-not-allowed text-ejo-muted;}}
 @layer components{.section-heading{@apply mb-4 flex items-end justify-between gap-3;}.section-heading h2{@apply font-display text-base font-bold tracking-tight;}}
+@keyframes ejo-marquee{to{transform:translateX(-50%);}}
+.marquee-track{animation:ejo-marquee 30s linear infinite;}
+.marquee-track:hover{animation-play-state:paused;}
+@media (prefers-reduced-motion: reduce){.marquee-track{animation:none;flex-wrap:wrap;}}
 
 @media (max-width: 1023px) {
   /* Conversation input stays reachable above the mobile tab bar. */

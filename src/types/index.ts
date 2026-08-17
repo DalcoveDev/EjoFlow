@@ -1,6 +1,7 @@
-export type ProviderStatus = 'connected' | 'unavailable' | 'loading';
+export type ProviderStatus = 'connected' | 'demo' | 'unavailable' | 'loading';
+export type ProviderCategory = 'government' | 'communication' | 'business' | 'personal' | 'ai';
 export interface Capability { id: string; name: string }
-export interface Provider { id: string; name: string; domain: string; description: string; status: ProviderStatus; capabilities: Capability[]; lastUsed?: string; mark: string; website?: string; }
+export interface Provider { id: string; name: string; category: ProviderCategory; domain: string; description: string; status: ProviderStatus; capabilities: Capability[]; lastUsed?: string; mark: string; website?: string; }
 export interface User { id: string; name: string; initials: string; }
 export type ConversationMessageType = 'user' | 'assistant' | 'system' | 'question' | 'action' | 'result' | 'error';
 export interface Message { id: string; author: 'user' | 'flow'; text: string; createdAt: string; type?: ConversationMessageType; }
@@ -10,3 +11,7 @@ export interface Action { id: string; label: string; providerId: string; }
 export interface Invoice { id: string; amount: number; currency: 'RWF'; status: 'pending' | 'paid'; }
 export interface Payment { id: string; amount: number; currency: 'RWF'; status: 'pending' | 'complete'; }
 export interface Transaction { id: string; paymentId: string; status: 'pending' | 'complete'; }
+export type ActivityStatus = 'completed' | 'pending' | 'failed';
+export interface Activity { id: string; provider: string; service: string; action: string; status: ActivityStatus; date: string; time: string; reference?: string; amount?: string; }
+export type DirectoryStatus = 'available' | 'connected' | 'coming-soon';
+export interface DirectoryProvider { id: string; name: string; domain: string; category: string; status: DirectoryStatus; }
