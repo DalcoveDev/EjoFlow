@@ -10,6 +10,10 @@ export const ejoChatService = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ providerId, conversationId, regenerate, messages }),
     });
+    if (res.status === 429) {
+      const data = await res.json().catch(() => ({}));
+      throw Object.assign(new Error(data.reply ?? '⚠️ AI yarushywe kuri uyu munsi — gerageza ejo.'), { quota: true });
+    }
     if (!res.ok) throw new Error('chat-failed');
     const data = await res.json();
     return data.reply ? { text: data.reply, ui: data.ui ?? null, conversationId: data.conversationId ?? null } : null;

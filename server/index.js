@@ -46,6 +46,11 @@ async function callEjoChat(messages, systemPrompt) {
     signal: AbortSignal.timeout(90000),
   });
   const data = await upstream.json().catch(() => ({}));
+  if (upstream.status === 429 || data?.error?.code === 'RATE_LIMITED') {
+    const err = new Error('EjoChat quota exceeded');
+    err.code = 'RATE_LIMITED';
+    throw err;
+  }
   if (!upstream.ok) throw new Error(`EjoChat error ${upstream.status}: ${JSON.stringify(data)}`);
   const content = data.choices?.[0]?.message?.content;
   if (!content) throw new Error("EjoChat ntabwo yagarutse n'igisubizo");
@@ -142,6 +147,7 @@ app.post('/api/chat', async (req, res) => {
     }
   } catch (err) {
     console.error(`[ejochat] request failed:`, err?.message ?? err);
+    if (err?.code === 'RATE_LIMITED') return res.status(429).json({ error: 'quota_exceeded', reply: '⚠️ AI yarushywe kuri uyu munsi — igihe cyo gukoresha kirangiye. Gerageza ejo.' });
     res.status(502).json({ error: String(err?.message ?? err) });
   }
 });
@@ -200,6 +206,7 @@ app.post('/api/discover', async (req, res) => {
     });
   } catch (err) {
     console.error(`[discover] request failed:`, err?.message ?? err);
+    if (err?.code === 'RATE_LIMITED') return res.status(429).json({ error: 'quota_exceeded' });
     res.status(502).json({ error: String(err?.message ?? err) });
   }
 });

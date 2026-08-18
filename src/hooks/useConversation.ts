@@ -49,8 +49,9 @@ export function useConversation(providerId: string) {
       setMessages(m => [...m, { role: 'assistant', content: reply.text }]);
       setItems(i => [...i, { id: crypto.randomUUID(), type: 'assistant', text: reply.text, ui: reply.ui ?? null }]);
       setTyping(false); setPhase('question');
-    } catch {
-      setItems(i => [...i, { id: crypto.randomUUID(), type: 'error', text: '⚠️ Ntitwashoboye kohereza ubutumwa. Gerageza nanone.' }]);
+    } catch (err) {
+      const text = (err as { quota?: boolean; message?: string })?.quota ? (err as { message: string }).message : '⚠️ Ntitwashoboye kohereza ubutumwa. Gerageza nanone.';
+      setItems(i => [...i, { id: crypto.randomUUID(), type: 'error', text }]);
       setTyping(false); setPhase('error');
     }
   }
@@ -74,8 +75,9 @@ export function useConversation(providerId: string) {
       setMessages(m => [...m, { role: 'assistant', content: reply.text }]);
       setItems(i => [...i, { id: crypto.randomUUID(), type: 'assistant', text: reply.text, ui: reply.ui ?? null }]);
       setTyping(false); setPhase('question');
-    } catch {
-      setItems(i => [...i, { id: crypto.randomUUID(), type: 'error', text: '⚠️ Ntitwashoboye kohereza ubutumwa. Gerageza nanone.' }]);
+    } catch (err) {
+      const text = (err as { quota?: boolean; message?: string })?.quota ? (err as { message: string }).message : '⚠️ Ntitwashoboye kohereza ubutumwa. Gerageza nanone.';
+      setItems(i => [...i, { id: crypto.randomUUID(), type: 'error', text }]);
       setTyping(false); setPhase('error');
     }
   }
