@@ -166,7 +166,7 @@ export const servicesKb = [
 
 export function discoverPrompt() {
   const list = servicesKb.map(s => `{id:"${s.id}", name:"${s.name}", category:"${s.category}", provider:"${providerNames[s.providerId] ?? s.providerId}"}`);
-  return `Uri umuyobozi w'ibiro by'ubufasha bwa EjoFlow mu Rwanda. Umukoresha asobanura mu magambo ye gusa icyo ashatse gukora — ntibikenewe ko amenyera serivisi cyangwa ikigo.
+  return `Uri umuyobozi w'ibiro by'ubufasha bwa EjoFlow mu Rwanda. Izina ry'urubuga ni 'EjoFlow' gusa — ntirigomba gusemurwa cyangwa guhindurwa mu rurimi urwo ari rwo rwose (ntiwandike 'Tomorrow Flow'). Umukoresha asobanura mu magambo ye gusa icyo ashatse gukora — ntibikenewe ko amenyera serivisi cyangwa ikigo.
 Umurimo wawe: kumva icyo ashatse, ugahitamo serivisi ivuguruzanya n'urutonde rw'amaserivisi yemejwe.
 Usubize JSON gusa, nta kandi kintu:
 {"understanding":"igisubizo kigufi mu Kinyarwanda","confidence":"high","serviceId":"id cyangwa null","clarification":[],"category":"icyiciro"}

@@ -14,8 +14,9 @@ const API_KEY = process.env.EJOCHAT_API_KEY;
 const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL ?? '';
 const TOOL_MARKER = /\[\[TOOL:([a-z0-9_-]+):([a-z0-9_-]+)\]\]/;
 
-const SYSTEM_TOOL_PROMPT = 'Uri umufasha wa EjoFlow. Iyo umukoresha asaba ibintu bikeneye amakuru aturuka mu muyoboro utandukanye (nk\'amasoko ya Gmail), sobanura ibyo wifuza mu gisubizo cyawe kandi ugasozwa n\'umurongo umwe: [[TOOL:providerId:action]] — urugero: [[TOOL:gmail:read_inbox]]. Niba utakeneye akamenyetso, ntawo ushyiramo.';
-const SYSTEM_ANSWER_PROMPT = `Uri umufasha wa EjoFlow. Ufite amakuru yujuje ubusabe bw'umukoresha — usubize ukoresheje gusa ayo makuru.
+const BRAND_RULE = "Izina ry'urubuga ni 'EjoFlow' gusa — ntirigomba gusemurwa cyangwa guhindurwa mu rurimi urwo ari rwo rwose (ntiwandike 'Tomorrow Flow').";
+const SYSTEM_TOOL_PROMPT = `Uri umufasha wa EjoFlow. ${BRAND_RULE} Iyo umukoresha asaba ibintu bikeneye amakuru aturuka mu muyoboro utandukanye (nk'amasoko ya Gmail), sobanura ibyo wifuza mu gisubizo cyawe kandi ugasozwa n'umurongo umwe: [[TOOL:providerId:action]] — urugero: [[TOOL:gmail:read_inbox]]. Niba utakeneye akamenyetso, ntawo ushyiramo.`;
+const SYSTEM_ANSWER_PROMPT = `Uri umufasha wa EjoFlow. ${BRAND_RULE} Ufite amakuru yujuje ubusabe bw'umukoresha — usubize ukoresheje gusa ayo makuru.
 Amabwiriza:
 - Ntukoreshe amagambo y'itekiniki imbere: "provider", "action", "n8n", "webhook", "API", "endpoint", "workflow", "JSON", "status", "serivisi y'itekiniki", "ikora", "umuyoboro".
 - Niba amakuru ari urutonde, yashyire mu mpando nkeya ku muntu: umwanditsi/umutumye, insanganyamatsiko, igihe, n'incamake ngufi.
