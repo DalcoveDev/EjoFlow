@@ -7,8 +7,11 @@ EjoFlow super-app — Kinyarwanda-first provider dashboard + EjoChat AI chat + n
 Repo: `C:\Users\Administrator\Documents\ChatGPT\EjoFlow` — GitHub `https://github.com/DalcoveDev/EjoFlow.git` (branch `master`).
 
 ## Current Phase (as of last session)
-**Language toggle (rw/en/fr) + search in conversations/activity are SHIPPED (commit `1e5164a`).**
-Globe switcher in AppShell header + language buttons on ProfilePage; `lang` passed to `/api/chat` so quota/error replies are localized. Search boxes on ConversationsPage (provider name / last message) and ActivityPage (provider / action label).
+**Notification bell + voice input + settings page are SHIPPED (commit `145906f`).**
+- NotificationBell (`src/components/layout/NotificationBell.tsx`): live actions feed, unread dot (localStorage `ejoflow.notifSeen`), opening marks read, items link to `/app/ibikorwa`, empty state. Replaced the fake bell in AppShell.
+- Voice input: mic button in chat composer (Web Speech API, `en-US`; Kinyarwanda unsupported → shows `chat.voiceHint` inline for 3s).
+- Settings (`/app/igenamiterere`): change display name (`authService.updateName` + `AuthContext.updateName`), export all data JSON (`GET /api/export`, blob download), two-step clear-all (`POST /api/data/clear` → `exportAllData()`/`clearAllData()` in `server/db.js`). Entry in profile dropdown + ProfilePage.
+- New translation keys: `notif.*`, `chat.voice*`, `settings.*`, `title.settings`.
 
 ## What's Running
 - Frontend dev: `npm run dev` on `http://localhost:5173` (vite proxy `/api` → 3001)
