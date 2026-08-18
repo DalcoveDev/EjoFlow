@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { ejoChatService, type ChatMessage } from '../services/ejoChatService';
+import { useI18n } from '../i18n/LanguageContext';
 import type { EjoUiData } from '../types';
 export interface BinkorereItem { id: string; done: boolean; text: string; error?: string; ui?: EjoUiData | null }
 export type BinkorereStage = 'idle' | 'working' | 'done' | 'error';
 export function useBinkorere() {
+  const { lang } = useI18n();
   const [items, setItems] = useState<BinkorereItem[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [stage, setStage] = useState<BinkorereStage>('idle');
@@ -16,7 +18,7 @@ export function useBinkorere() {
     setMessages(m => [...m, userMsg]);
     setStage('working');
     try {
-      const reply = await ejoChatService.send('binkorere', [...messages, userMsg], conversationId, false, 'do');
+      const reply = await ejoChatService.send('binkorere', [...messages, userMsg], conversationId, false, 'do', lang);
       if (reply?.conversationId) setConversationId(reply.conversationId);
       setItems(i => [...i, { id: crypto.randomUUID(), done: true, text, ui: reply?.ui ?? null }]);
       setMessages(m => [...m, { role: 'assistant', content: reply?.text ?? '' }]);

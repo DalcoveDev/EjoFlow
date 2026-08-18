@@ -98,7 +98,7 @@ app.get('/api/stats', (_req, res) => res.json(getStats()));
 app.get('/api/conversations/:providerId', (req, res) => res.json(getConversationHistory(req.params.providerId)));
 
 app.post('/api/chat', async (req, res) => {
-  const { messages, providerId = 'ejochat', regenerate = false, mode = 'chat' } = req.body ?? {};
+  const { messages, providerId = 'ejochat', regenerate = false, mode = 'chat', lang = 'rw' } = req.body ?? {};
   if (!API_KEY) return res.status(500).json({ error: 'EJOCHAT_API_KEY ntihari mu .env' });
   if (!Array.isArray(messages) || messages.length === 0) return res.status(400).json({ error: 'messages ntizitangwa' });
   try {
@@ -156,10 +156,16 @@ app.post('/api/chat', async (req, res) => {
     }
   } catch (err) {
     console.error(`[ejochat] request failed:`, err?.message ?? err);
-    if (err?.code === 'RATE_LIMITED') return res.status(429).json({ error: 'quota_exceeded', reply: '⚠️ AI yarushywe kuri uyu munsi — igihe cyo gukoresha kirangiye. Gerageza ejo.' });
+    if (err?.code === 'RATE_LIMITED') return res.status(429).json({ error: 'quota_exceeded', reply: QUOTA_REPLIES[lang] ?? QUOTA_REPLIES.rw });
     res.status(502).json({ error: String(err?.message ?? err) });
   }
 });
+
+const QUOTA_REPLIES = {
+  rw: '⚠️ AI yarushywe kuri uyu munsi — igihe cyo gukoresha kirangiye. Gerageza ejo.',
+  en: '⚠️ The AI has reached its daily limit — the usage time is over. Try again tomorrow.',
+  fr: '⚠️ L\'IA a atteint sa limite quotidienne — le temps d\'utilisation est écoulé. Réessayez demain.',
+};
 
 function parseJsonLoose(text) {
   const cleaned = String(text ?? '').replace(/```json|```/g, '').trim();

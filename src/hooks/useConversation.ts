@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useI18n } from '../i18n/LanguageContext';
 import { ejoChatService, type ChatMessage } from '../services/ejoChatService';
 import type { ConversationMessageType, EjoUiData } from '../types';
 export interface ConversationItem { id: string; type: ConversationMessageType; text: string; ui?: EjoUiData | null; }
 export type ConversationPhase = 'question' | 'processing' | 'review' | 'error';
 export function useConversation(providerId: string) {
+  const { lang } = useI18n();
   const [items, setItems] = useState<ConversationItem[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [phase, setPhase] = useState<ConversationPhase>('question');
@@ -43,7 +45,7 @@ export function useConversation(providerId: string) {
     setMessages(history);
     setTyping(true); setPhase('processing');
     try {
-      const reply = await ejoChatService.send(providerId, history, conversationId);
+      const reply = await ejoChatService.send(providerId, history, conversationId, false, 'chat', lang);
       if (!reply) { setTyping(false); setPhase('question'); return; }
       if (reply.conversationId) setConversationId(reply.conversationId);
       setMessages(m => [...m, { role: 'assistant', content: reply.text }]);
@@ -69,7 +71,7 @@ export function useConversation(providerId: string) {
     });
     setTyping(true); setPhase('processing');
     try {
-      const reply = await ejoChatService.send(providerId, history, conversationId, true);
+      const reply = await ejoChatService.send(providerId, history, conversationId, true, 'chat', lang);
       if (!reply) { setTyping(false); setPhase('question'); return; }
       if (reply.conversationId) setConversationId(reply.conversationId);
       setMessages(m => [...m, { role: 'assistant', content: reply.text }]);
