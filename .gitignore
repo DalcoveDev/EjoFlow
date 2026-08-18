@@ -3,4 +3,5 @@ dist/
 *.log
 .DS_Store
 server/.env
-server/ejoflow.db*ejoflow.db*
+server/ejoflow.db*
+ejoflow.db*
