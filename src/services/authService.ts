@@ -4,5 +4,6 @@ function initialsOf(name: string): string { const parts = name.trim().split(/\s+
 export const authService = {
   async getSession(): Promise<User | null> { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) as User : null; },
   async login(identifier: string): Promise<User> { const user: User = { id: crypto.randomUUID(), name: identifier.trim(), initials: initialsOf(identifier) }; localStorage.setItem(KEY, JSON.stringify(user)); return user; },
+  async updateName(name: string): Promise<User> { const current = await this.getSession(); if (!current) throw new Error('no-session'); const user: User = { ...current, name: name.trim(), initials: initialsOf(name) }; localStorage.setItem(KEY, JSON.stringify(user)); return user; },
   logout(): void { localStorage.removeItem(KEY); },
 };

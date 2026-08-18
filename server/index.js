@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import { normalizeServiceResult, describeForEjoChat, errorCodeToHint } from './normalizer.js';
-import { getOrCreateConversation, appendMessage, recordAction, lastMessageContent, deleteLastAssistantMessage, getConversationHistory, listConversations, listActions, getStats } from './db.js';
+import { getOrCreateConversation, appendMessage, recordAction, lastMessageContent, deleteLastAssistantMessage, getConversationHistory, listConversations, listActions, getStats, exportAllData, clearAllData } from './db.js';
 import { servicesKb, discoverPrompt } from './services-kb.js';
 
 const app = express();
@@ -94,6 +94,16 @@ app.get('/api/actions', (req, res) => {
 });
 
 app.get('/api/stats', (_req, res) => res.json(getStats()));
+
+app.get('/api/export', (_req, res) => {
+  res.json({ exportedAt: new Date().toISOString(), data: exportAllData() });
+});
+
+app.post('/api/data/clear', (_req, res) => {
+  clearAllData();
+  res.json({ ok: true });
+});
+
 
 app.get('/api/conversations/:providerId', (req, res) => res.json(getConversationHistory(req.params.providerId)));
 

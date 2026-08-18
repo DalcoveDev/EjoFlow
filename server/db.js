@@ -125,3 +125,18 @@ export function getStats() {
     actionsOk: one('SELECT COUNT(*) AS c FROM actions WHERE ok = 1'),
   };
 }
+
+export function exportAllData() {
+  const conversations = db.prepare('SELECT id, provider_id, created_at, updated_at FROM conversations ORDER BY created_at ASC').all();
+  const messages = db.prepare('SELECT id, conversation_id, role, content, ui, created_at FROM messages ORDER BY created_at ASC').all()
+    .map((m) => ({ id: m.id, conversationId: m.conversation_id, role: m.role, content: m.content, ui: m.ui ? JSON.parse(m.ui) : null, createdAt: m.created_at }));
+  const actions = db.prepare('SELECT id, conversation_id, provider, action, ok, created_at FROM actions ORDER BY created_at ASC').all()
+    .map((a) => ({ id: a.id, conversationId: a.conversation_id, provider: a.provider, action: a.action, ok: a.ok === 1, createdAt: a.created_at }));
+  return { conversations, messages, actions };
+}
+
+export function clearAllData() {
+  db.prepare('DELETE FROM messages').run();
+  db.prepare('DELETE FROM actions').run();
+  db.prepare('DELETE FROM conversations').run();
+}
