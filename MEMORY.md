@@ -49,13 +49,22 @@ All in `server/.env` (gitignored):
 - English path: same with "Check my emails please" → must reply in English
 - Error paths (tested): dead N8N_WEBHOOK_URL → friendly apology, `unknown_action` → friendly unsupported message
 
-## Git State (UNCOMMITTED — big backlog)
-- Only initial commit `7f58ebf` pushed. ALL later work uncommitted: marquee, auth, dummy-data removal, 10-provider dashboard, EjoChat wiring, n8n bridge, normalizer, MEMORY.md.
-- `.gitignore` covers `node_modules/`, `dist/`, `server/.env`.
-- Next move: user decision on commit+push (remind: rotate keys first since they were in chat history).
+## Git State
+- 5 commits pushed to `origin/master`: `7f58ebf` (initial) → `166c38d` (dashboard/auth/EjoChat/n8n) → `2cfec65` (SQLite + real-data pages + Menya Serivisi) → `58b21c0` (iPhone 6 chat fix) → `89ef5a4` (Kinyarwanda nav + quota message).
+- `.gitignore` covers `node_modules/`, `dist/`, `server/.env`, `server/ejoflow.db*`.
+- NOTE: `N8N_MCP_KEY` and `EJOCHAT_API_KEY` were pasted in chat history — rotate before any public/team launch.
 
 ## Design Rules (from user)
-- No redesign; keep ejo-blue/ejo-green, Tailwind, framer-motion, Kinyarwanda-first UI
+- **BRAND (non-negotiable): the logo/wordmark is ALWAYS "EjoFlow" — blue "Ejo" + green "Flow". NEVER translate it, NEVER write "Tomorrow Flow" (Ejo = tomorrow). It stays EjoFlow in every language and every copy.**
+- No redesign; keep ejo-blue/ejo-green (#123B5D/#16865B), Tailwind, framer-motion, Kinyarwanda-first UI
 - No gradients/glassmorphism/excessive shadows; official favicons via google s2 favicons, native lucide icons for EjoFlow brands
 - Gov/demo providers: amber "Demo" badge, no false live claims
 - User never sees internal terms: provider/action/status/webhook/n8n/API/endpoint/workflow/JSON/status codes — logs only
+- Mobile nav labels are Kinyarwanda (Serivisi zanjye, Ibiganiro, Ibikorwa, Umwirondoro)
+
+## Current State (Aug 18, 2026 — after several pushed commits)
+- Git: 5 commits pushed to origin/master (latest `89ef5a4`). Branch in sync.
+- DB: SQLite via `node:sqlite` (server/db.js, `server/ejoflow.db` gitignored) — conversations/messages/actions tables.
+- Menya Serivisi (`/app/menya-serivisi`): service navigator — `POST /api/discover` (server/services-kb.js KB + `discoverPrompt()` strict-JSON + keyword fallback), RDB provider added, route + nav everywhere (AppShell, dashboard CTA, chat header, landing footer).
+- Chat page mobile layout: `fixed` frame (`top-16/bottom-[68px]`, `md:top-[72px]`, `lg:static` + 3-col grid) — works on iPhone 6 (iOS 12, no dvh support).
+- Quota handling: upstream 429 → backend returns 429 `{error:'quota_exceeded', reply:'⚠️ AI yarushywe kuri uyu munsi…'}` → chat shows friendly bubble.

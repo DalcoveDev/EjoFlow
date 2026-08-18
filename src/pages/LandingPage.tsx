@@ -17,7 +17,7 @@ export function LandingPage() {
       <h1 className="mt-6 max-w-2xl font-display text-3xl font-extrabold leading-tight tracking-tight md:text-5xl">Serivisi zose, <span className="text-[#9ee3c4]">ahantu hamwe.</span></h1>
       <p className="mt-5 max-w-xl leading-7 text-blue-100/90">EjoFlow yegeranya serivisi za Leta, amabanki, mobile money, email n'ubwishyu — mu kiganiro kimwe. Ikubwira intambwe n'izindi, ikamanika amakuru akenewe, kandi nta kintu ikora utari wabemeje.</p>
       <div className="mt-8 flex flex-wrap items-center gap-3">
-        <Link to="/app" className="inline-flex items-center gap-2 bg-ejo-green px-6 py-3.5 font-display text-sm font-bold text-white hover:bg-[#69b894]">Tangira nonaha <ArrowRight size={16}/></Link>
+        <Link to="/app" className="inline-flex items-center gap-2 bg-ejo-green px-6 py-3.5 font-display text-sm font-bold text-white hover:bg-[#116747]">Tangira nonaha <ArrowRight size={16}/></Link>
         <a href="#ikora" className="inline-flex items-center gap-2 border border-white/40 px-6 py-3.5 text-sm font-bold text-white hover:bg-white/10">Reba ikora ite</a>
       </div>
       <ul className="mt-12 grid max-w-3xl gap-3 text-[11px] font-bold sm:grid-cols-3">
@@ -37,7 +37,7 @@ export function LandingPage() {
     </section>
     <section className="bg-ejo-blue"><div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-14 md:flex-row md:items-center md:justify-between md:px-8">
       <div><p className="eyebrow text-blue-100/80">BEHERA GUHEREZA IBYIFUZO</p><h2 className="max-w-xl font-display text-2xl font-bold text-white">Ufite icyifuzo? Limbika, EjoFlow irakorera.</h2><p className="mt-2 max-w-xl text-sm leading-6 text-blue-100/90">Nta kwandika amafishi, nta kwiga uburyo buri serivisi — sobanura gusa icyo ushaka gukora.</p></div>
-      <Link to="/app" className="inline-flex shrink-0 items-center gap-2 bg-ejo-green px-6 py-3.5 font-display text-sm font-bold text-white hover:bg-[#69b894]">Fungura app <ArrowRight size={16}/></Link>
+      <Link to="/app" className="inline-flex shrink-0 items-center gap-2 bg-ejo-green px-6 py-3.5 font-display text-sm font-bold text-white hover:bg-[#116747]">Fungura app <ArrowRight size={16}/></Link>
     </div></section>
     <footer className="border-t border-ejo-border bg-white"><div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between md:px-8">
       <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold text-ejo-blue"><span className="grid size-6 place-items-center rounded-full bg-ejo-blue text-sm text-white">e</span>Ejo<span className="text-ejo-green">Flow</span></Link>
