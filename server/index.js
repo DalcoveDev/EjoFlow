@@ -16,6 +16,14 @@ const TOOL_MARKER = /\[\[TOOL:([a-z0-9_-]+):([a-z0-9_-]+)\]\]/;
 
 const BRAND_RULE = "Izina ry'urubuga ni 'EjoFlow' gusa — ntirigomba gusemurwa cyangwa guhindurwa mu rurimi urwo ari rwo rwose (ntiwandike 'Tomorrow Flow').";
 const SYSTEM_TOOL_PROMPT = `Uri umufasha wa EjoFlow. ${BRAND_RULE} Iyo umukoresha asaba ibintu bikeneye amakuru aturuka mu muyoboro utandukanye (nk'amasoko ya Gmail), sobanura ibyo wifuza mu gisubizo cyawe kandi ugasozwa n'umurongo umwe: [[TOOL:providerId:action]] — urugero: [[TOOL:gmail:read_inbox]]. Niba utakeneye akamenyetso, ntawo ushyiramo.`;
+const SYSTEM_DO_PROMPT = `Uri Binkorere AI — umukozi w'ikoranabuhanga wa EjoFlow ushinzwe GUKORA ibikorwa (automation) ku busabe bw'umukoresha, atari gusobanura serivisi.
+${BRAND_RULE}
+Uko ukora:
+1. Umukoresha asaba igikorwa (urugero: gusoma imenyesha za Gmail, kohereza imenyesha, gukurikirana ubusabe).
+2. Iyo igikorwa kikeneye amakuru aturuka mu muyoboro (nk'amasoko ya Gmail), sobanura ibyo ugiye gukora mu gisubizo cyawe kandi ugasozwa n'umurongo umwe: [[TOOL:providerId:action]] — urugero: [[TOOL:gmail:read_inbox]].
+3. Usubize gusa igisubizo kigufi cy'ibyo wakoreye: gitangire "Byakozwe! ✓" cyangwa "Ntibyashobotse" — nta bisobanuro birebire, nta kwandika intambwe, nta kuvuga uko serivisi iboneka.
+Ibikorwa bijyanye n'ubwishyu cyangwa by'iteka (kohereza amafaranga, gusinyisha, gukuraho) NTIBIKORWE mbere yo kwemeza — ubaze umukoresha mbere.
+Niba ubusabe budasobanutse, ubaze ikibazo kimwe gusa.`;
 const SYSTEM_ANSWER_PROMPT = `Uri umufasha wa EjoFlow. ${BRAND_RULE} Ufite amakuru yujuje ubusabe bw'umukoresha — usubize ukoresheje gusa ayo makuru.
 Amabwiriza:
 - Ntukoreshe amagambo y'itekiniki imbere: "provider", "action", "n8n", "webhook", "API", "endpoint", "workflow", "JSON", "status", "serivisi y'itekiniki", "ikora", "umuyoboro".
@@ -90,7 +98,7 @@ app.get('/api/stats', (_req, res) => res.json(getStats()));
 app.get('/api/conversations/:providerId', (req, res) => res.json(getConversationHistory(req.params.providerId)));
 
 app.post('/api/chat', async (req, res) => {
-  const { messages, providerId = 'ejochat', regenerate = false } = req.body ?? {};
+  const { messages, providerId = 'ejochat', regenerate = false, mode = 'chat' } = req.body ?? {};
   if (!API_KEY) return res.status(500).json({ error: 'EJOCHAT_API_KEY ntihari mu .env' });
   if (!Array.isArray(messages) || messages.length === 0) return res.status(400).json({ error: 'messages ntizitangwa' });
   try {
@@ -100,7 +108,7 @@ app.post('/api/chat', async (req, res) => {
     if (lastUser && lastMessageContent(conversation.id) !== lastUser.content) {
       appendMessage(conversation.id, 'user', lastUser.content);
     }
-    const first = await callEjoChat(messages, SYSTEM_TOOL_PROMPT);
+    const first = await callEjoChat(messages, mode === 'do' ? SYSTEM_DO_PROMPT : SYSTEM_TOOL_PROMPT);
     console.log(`[ejochat] first call request_id=${first.requestId} latency_ms=${first.latencyMs}`);
     const marker = first.content.match(TOOL_MARKER);
     if (!marker) {
