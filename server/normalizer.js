@@ -32,10 +32,10 @@ export function describeForEjoChat({ data }) {
 export function errorCodeToHint(code) {
   switch (code) {
     case 'unsupported_action':
-      return 'Icyo gikorwa nticyategurwa ubu kuri iyi serivisi.';
+      return '❌ Icyo gikorwa nticyategurwa ubu kuri iyi serivisi.';
     case 'service_unavailable':
-      return 'Serivisi ntishoboye kugerwaho ubu, gerageza nyuma.';
+      return '⚠️ Serivisi ntishoboye kugerwaho ubu, gerageza nyuma.';
     default:
-      return 'Serivisi ntishoboye kugerwaho ubu, gerageza nyuma.';
+      return '⚠️ Serivisi ntishoboye kugerwaho ubu, gerageza nyuma.';
   }
 }

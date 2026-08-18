@@ -42,7 +42,7 @@ export function LandingPage() {
     <footer className="border-t border-ejo-border bg-white"><div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between md:px-8">
       <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold text-ejo-blue"><span className="grid size-6 place-items-center rounded-full bg-ejo-blue text-sm text-white">e</span>Ejo<span className="text-ejo-green">Flow</span></Link>
       <p className="text-[10px] leading-4 text-ejo-muted">EjoFlow — demo ya serivisi zegeranyije. Amabara y'ibiro n'amabanki akoreshwa mu cyo kwerekana gusa.<br/>© 2026 · Rwanda &amp; isi yose</p>
-      <nav className="flex gap-4 text-[10px] font-bold text-ejo-blue"><Link to="/app" className="hover:text-ejo-green">Serivisi zanjye</Link><Link to="/app/ibikorwa" className="hover:text-ejo-green">Ibikorwa</Link><Link to="/app/ubufasha" className="hover:text-ejo-green">Ubufasha</Link></nav>
+      <nav className="flex gap-4 text-[10px] font-bold text-ejo-blue"><Link to="/app" className="hover:text-ejo-green">Serivisi zanjye</Link><Link to="/app/menya-serivisi" className="hover:text-ejo-green">Menya Serivisi</Link><Link to="/app/ibikorwa" className="hover:text-ejo-green">Ibikorwa</Link><Link to="/app/ubufasha" className="hover:text-ejo-green">Ubufasha</Link></nav>
     </div></footer>
   </div>;
 }

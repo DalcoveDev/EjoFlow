@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import { normalizeServiceResult, describeForEjoChat, errorCodeToHint } from './normalizer.js';
+import { getOrCreateConversation, appendMessage, recordAction, lastMessageContent, deleteLastAssistantMessage, getConversationHistory, listConversations, listActions, getStats } from './db.js';
+import { servicesKb, discoverPrompt } from './services-kb.js';
 
 const app = express();
 app.use(cors());
@@ -17,7 +19,8 @@ const SYSTEM_ANSWER_PROMPT = `Uri umufasha wa EjoFlow. Ufite amakuru yujuje ubus
 Amabwiriza:
 - Ntukoreshe amagambo y'itekiniki imbere: "provider", "action", "n8n", "webhook", "API", "endpoint", "workflow", "JSON", "status", "serivisi y'itekiniki", "ikora", "umuyoboro".
 - Niba amakuru ari urutonde, yashyire mu mpando nkeya ku muntu: umwanditsi/umutumye, insanganyamatsiko, igihe, n'incamake ngufi.
-- Niba amakuru yerekana ko gikorwa kitakorwa, binyeze mu kinyabupfura.`;
+- Niba amakuru yerekana ko gikorwa kitakorwa, binyeze mu kinyabupfura.
+- Koresha imodoka (emoji) nke kandi zinyuranye kugira ngo umukoresha asome byoroshye. Urugero: 📧 imeli, ✅ ibyo byagenze neza, ⚠️ umuburo, ❌ ikintu kitagenze, 📅 itariki, 🔔 imenyesha, 💰 amafaranga. Tangira umurongo w'ingenzi ku modoka, ntukoreshe imodoka nyinshi (1 ku murongo, ntarenga 2 muri buri gisubizo).`;
 
 const RW_KEYWORDS = ['reka', 'mbone', 'imenyesha', 'ubutumwa', 'ndashaka', 'shaka', 'gera', 'uburyo', 'byose', 'cyane', 'vuga', 'subiza', 'kugira', 'nyuma', 'icyo', 'gikorwa', 'serivisi'];
 
@@ -63,21 +66,41 @@ async function callN8n(payload) {
 }
 
 function staticFallbackReply(code) {
-  if (code === 'unsupported_action') return 'Sinshoboye gukora icyo gikorwa kuri iyi serivisi ubu.';
-  return 'Sinshoboye kugera kuri serivisi ubu. Gerageza nyuma.';
+  if (code === 'unsupported_action') return '❌ Sinshoboye gukora icyo gikorwa kuri iyi serivisi ubu.';
+  return '⚠️ Sinshoboye kugera kuri serivisi ubu. Gerageza nyuma.';
 }
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
+app.get('/api/conversations', (_req, res) => res.json(listConversations()));
+
+app.get('/api/actions', (req, res) => {
+  const limit = Math.min(Number(req.query.limit) || 50, 200);
+  res.json(listActions(limit));
+});
+
+app.get('/api/stats', (_req, res) => res.json(getStats()));
+
+app.get('/api/conversations/:providerId', (req, res) => res.json(getConversationHistory(req.params.providerId)));
+
 app.post('/api/chat', async (req, res) => {
-  const { messages } = req.body ?? {};
+  const { messages, providerId = 'ejochat', regenerate = false } = req.body ?? {};
   if (!API_KEY) return res.status(500).json({ error: 'EJOCHAT_API_KEY ntihari mu .env' });
   if (!Array.isArray(messages) || messages.length === 0) return res.status(400).json({ error: 'messages ntizitangwa' });
   try {
+    const conversation = getOrCreateConversation(providerId);
+    if (regenerate) deleteLastAssistantMessage(conversation.id);
+    const lastUser = [...messages].reverse().find((m) => m.role === 'user');
+    if (lastUser && lastMessageContent(conversation.id) !== lastUser.content) {
+      appendMessage(conversation.id, 'user', lastUser.content);
+    }
     const first = await callEjoChat(messages, SYSTEM_TOOL_PROMPT);
     console.log(`[ejochat] first call request_id=${first.requestId} latency_ms=${first.latencyMs}`);
     const marker = first.content.match(TOOL_MARKER);
-    if (!marker) return res.json({ reply: first.content });
+    if (!marker) {
+      appendMessage(conversation.id, 'assistant', first.content);
+      return res.json({ reply: first.content, ui: null, conversationId: conversation.id });
+    }
 
     const [, provider, action] = marker;
     const replyWithoutMarker = first.content.replace(TOOL_MARKER, '').trim();
@@ -87,9 +110,11 @@ app.post('/api/chat', async (req, res) => {
       console.log(`[ejochat:tool] raw ${provider}:${action} ->`, JSON.stringify(raw));
       normalized = normalizeServiceResult({ provider, action, raw });
       console.log(`[ejochat:tool] normalized ->`, JSON.stringify(normalized));
+      recordAction(conversation.id, provider, action, true);
     } catch (err) {
       console.error(`[ejochat:tool] service call failed ${provider}:${action}:`, err?.message ?? err);
       normalized = { ok: false, code: 'service_unavailable' };
+      recordAction(conversation.id, provider, action, false);
     }
 
     const toolMessages = [...messages, { role: 'assistant', content: replyWithoutMarker }];
@@ -99,20 +124,82 @@ app.post('/api/chat', async (req, res) => {
         [...toolMessages, { role: 'user', content: `Aya ni amakuru avuye mu serivisi yasabwe: ${describeForEjoChat(normalized)}. Subiza umukoresha.` }],
         prompt,
       );
-      return res.json({ reply: final.content, ui: normalized.data });
+      appendMessage(conversation.id, 'assistant', final.content, normalized.data);
+      return res.json({ reply: final.content, ui: normalized.data, conversationId: conversation.id });
     }
     try {
       const final = await callEjoChat(
         [...toolMessages, { role: 'user', content: errorCodeToHint(normalized.code) }],
         prompt,
       );
-      return res.json({ reply: final.content });
+      appendMessage(conversation.id, 'assistant', final.content);
+      return res.json({ reply: final.content, ui: null, conversationId: conversation.id });
     } catch (err) {
       console.error(`[ejochat:tool] fallback phrasing failed:`, err?.message ?? err);
-      return res.json({ reply: staticFallbackReply(normalized.code) });
+      const fallback = staticFallbackReply(normalized.code);
+      appendMessage(conversation.id, 'assistant', fallback);
+      return res.json({ reply: fallback, ui: null, conversationId: conversation.id });
     }
   } catch (err) {
     console.error(`[ejochat] request failed:`, err?.message ?? err);
+    res.status(502).json({ error: String(err?.message ?? err) });
+  }
+});
+
+function parseJsonLoose(text) {
+  const cleaned = String(text ?? '').replace(/```json|```/g, '').trim();
+  const start = cleaned.indexOf('{');
+  const end = cleaned.lastIndexOf('}');
+  if (start === -1 || end === -1) return null;
+  try { return JSON.parse(cleaned.slice(start, end + 1)); } catch { return null; }
+}
+
+const DISCOVER_PROMPT = discoverPrompt();
+const DISCOVER_KEYWORDS = [
+  ['passport', ['passport', 'pasiporo', 'passeport']],
+  ['birth-certificate', ['amavuko', 'kivuko', 'birth certificate']],
+  ['divorce-certificate', ['divorce', 'gutandukana']],
+  ['mutuelle', ['mutuelle', 'mituweli', 'ubwishingizi bw\'ubuzima']],
+  ['pension', ['pension', 'pansiyo', 'izabukuru', 'retirement']],
+  ['tax-registration', ['tin', 'kwiyandikisha mu misoro', 'umusoro']],
+  ['tax-clearance', ['tax clearance', 'clearance', 'icyemezo cy\'imisoro']],
+  ['driving-license', ['permis', 'driving', 'ubushoferi']],
+  ['police-report', ['police', 'icyamaganwa', 'rapport']],
+  ['business-registration', ['business', 'ubucuruzi', 'entreprise', 'kwiyandikisha']],
+  ['certificate-verification', ['kugenzura', 'verification', 'kureba niba']],
+];
+function matchServiceByKeywords(text) {
+  const lower = String(text).toLowerCase();
+  for (const [id, keys] of DISCOVER_KEYWORDS) if (keys.some(k => lower.includes(k))) return servicesKb.find(s => s.id === id) ?? null;
+  return null;
+}
+
+app.post('/api/discover', async (req, res) => {
+  const { text } = req.body ?? {};
+  if (!API_KEY) return res.status(500).json({ error: 'EJOCHAT_API_KEY ntihari mu .env' });
+  if (!text || !String(text).trim()) return res.status(400).json({ error: 'text ntitangwa' });
+  try {
+    const first = await callEjoChat([{ role: 'user', content: String(text).trim() }], DISCOVER_PROMPT);
+    console.log(`[discover] request_id=${first.requestId} raw=`, first.content);
+    const parsed = parseJsonLoose(first.content);
+    const service = parsed?.serviceId ? servicesKb.find(s => s.id === parsed.serviceId) ?? null : null;
+    if (service) {
+      console.log(`[discover] matched -> ${service.id} (${service.providerId})`);
+      return res.json({ status: 'matched', understanding: parsed.understanding ?? 'Ndumva icyo ushaka.', category: parsed.category ?? service.category, service });
+    }
+    const fallback = matchServiceByKeywords(text);
+    if (fallback) {
+      console.log(`[discover] fallback keyword match -> ${fallback.id}`);
+      return res.json({ status: 'matched', understanding: parsed?.understanding ?? 'Ndumva icyo ushaka.', category: parsed?.category ?? fallback.category, service: fallback });
+    }
+    console.log(`[discover] no match ->`, JSON.stringify(parsed));
+    return res.json({
+      status: 'clarify',
+      understanding: parsed?.understanding ?? 'Ntabwo ntahuye neza n\'icyo ushaka.',
+      clarification: Array.isArray(parsed?.clarification) ? parsed.clarification.slice(0, 3) : [],
+    });
+  } catch (err) {
+    console.error(`[discover] request failed:`, err?.message ?? err);
     res.status(502).json({ error: String(err?.message ?? err) });
   }
 });

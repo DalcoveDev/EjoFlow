@@ -15,3 +15,28 @@ export type ActivityStatus = 'completed' | 'pending' | 'failed';
 export interface Activity { id: string; provider: string; service: string; action: string; status: ActivityStatus; date: string; time: string; reference?: string; amount?: string; }
 export type DirectoryStatus = 'available' | 'connected' | 'coming-soon';
 export interface DirectoryProvider { id: string; name: string; domain: string; category: string; status: DirectoryStatus; }
+export interface EjoMailItem { sender: string; subject: string; summary: string; date: string }
+export interface EjoEmailList { type: 'email_list'; title: string; count: number; items: EjoMailItem[] }
+export type EjoUiData = EjoEmailList;
+export interface ServiceGuide {
+  id: string;
+  category: string;
+  providerId: string;
+  name: string;
+  description: string | null;
+  whoCanUse: string | null;
+  documents: string[] | null;
+  infoNeeded: string[] | null;
+  steps: string[] | null;
+  fees: string | null;
+  processingTime: string | null;
+  access: string | null;
+}
+export type DiscoverStatus = 'matched' | 'clarify';
+export interface DiscoverResult {
+  status: DiscoverStatus;
+  understanding: string;
+  category?: string | null;
+  service?: ServiceGuide | null;
+  clarification?: string[];
+}
